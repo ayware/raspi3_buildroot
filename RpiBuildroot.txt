@@ -1,0 +1,85 @@
+Buildroot:
+	Target Packages->Network App.->openssh(needed sshpass additional to that)
+	Images:
+	
+		## cp ~/logo_linux_clut224.ppm ~/buildroot/output/build/linux-1ebe8d4a4c96cd6a90805c74233a468854960f67/drivers/video/logo/
+	
+		drivers/video/console/fbmem.c dosyası ->
+						fb_show_logo_line:
+							//image.dx = 0;
+							//image.dy = y;
+							image.dx = (info->var.xres / 2) - (image.width / 2);
+							image.dy = (info->var.yres / 2) - (image.height / 2);
+							fb_do_show_logo(info,&image,rotate,1);
+		
+		drivers/video/fbdev/core/fbcon.c dosyası ->
+						fbcon_prepare_logo:
+						logo_height += (info->var.yres / 2) - (logo_height / 2);
+						
+		after -> make linux-rebuild -> make -j4
+
+
+.img write command on ubuntu:
+			sudo dd bs=4M if=sdcard.img of=/dev/sdb && sync
+			
+Ubuntu:
+	apt-get install git build-essential libncurses5-dev
+	apt-get install lib32z1(x64)
+
+Edit:
+	/etc/ssh/sshd_config->PermitRootLogin yes (!!!!)
+Boot:
+	create ssh file without extension(needed or not)
+Ethernet and ssh:
+	set ethernet as dhcp with 192.168.1.1 and
+	Rpi:
+		/etc/network/interfaces->
+									< auto eth0
+									iface eth0 inet static
+										address "ip"
+										netmask "subnet mask"  > or <auto eth0
+																	 iface eth0 inet dhcp
+										
+										
+Virtual:
+	Network->Advanced->PortForwarding->
+								Host IP: 127.0.0.1
+								Host Port: 2222
+								Guest IP: 10.0.2.15
+								Guest Port: 22
+
+qt.pro:
+	
+	target.path = /root 
+	INSTALLS += target   or     qnx: target.path = /tmp/$${TARGET}/bin
+								else: unix:!android: target.path = /opt/$${TARGET}/bin
+								!isEmpty(target.path): INSTALLS += target
+
+	
+etc/inittab:
+	put  # -> tty1::respawn...HDMI
+	alternatives: loglevel=3,quiet , remove all console parameters
+boot/cmdline.txt:
+	remove console=tty1
+	
+Unknown Module:
+	install lib on linux
+	
+
+/boot/config:
+
+	add -> 
+			hdmi_group=2
+			hdmi_mode=87
+			hdmi_cvt 480 800 60 6 0 0 0
+			dtoverlay=ads7846,cs=1,penirq=25,penirq_pull=2,speed=50000,keep_vref_on=0,swapxy=0,pmax=255,xohms=150,xmin=200,xmax=3900,ymin=200,ymax=3900
+			display_rotate=3
+
+			disable_splash=1
+			avoid_warnings=1
+			
+			
+
+Eglfs bug:
+	in ubuntu ->
+		export QT_QPA_EGLFS_INTEGRATION=eglfs_viv  or  export QT_QPA_EGLFS_INTEGRATION=none
