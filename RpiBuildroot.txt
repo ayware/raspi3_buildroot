@@ -4,7 +4,7 @@ Buildroot:
 	
 		## cp ~/logo_linux_clut224.ppm ~/buildroot/output/build/linux-1ebe8d4a4c96cd6a90805c74233a468854960f67/drivers/video/logo/
 	
-		drivers/video/console/fbmem.c dosyası ->
+		drivers/video/console/fbcon.c dosyası ->
 						fb_show_logo_line:
 							//image.dx = 0;
 							//image.dy = y;
@@ -12,7 +12,7 @@ Buildroot:
 							image.dy = (info->var.yres / 2) - (image.height / 2);
 							fb_do_show_logo(info,&image,rotate,1);
 		
-		drivers/video/fbdev/core/fbcon.c dosyası ->
+		drivers/video/fbdev/core/fbmem.c dosyası ->
 						fbcon_prepare_logo:
 						logo_height += (info->var.yres / 2) - (logo_height / 2);
 						
@@ -43,7 +43,7 @@ Ethernet and ssh:
 										
 Virtual:
 	Network->Advanced->PortForwarding->
-								Host IP: 127.0.0.1
+								Host IP: 127.0.0.1 (0.0.0.0)
 								Host Port: 2222
 								Guest IP: 10.0.2.15
 								Guest Port: 22
@@ -54,6 +54,10 @@ qt.pro:
 	INSTALLS += target   or     qnx: target.path = /tmp/$${TARGET}/bin
 								else: unix:!android: target.path = /opt/$${TARGET}/bin
 								!isEmpty(target.path): INSTALLS += target
+	
+	INSTALLS = target 
+	target.files = "file_name"
+	target.path = "file_path"
 
 	
 etc/inittab:
@@ -83,3 +87,33 @@ Unknown Module:
 Eglfs bug:
 	in ubuntu ->
 		export QT_QPA_EGLFS_INTEGRATION=eglfs_viv  or  export QT_QPA_EGLFS_INTEGRATION=none
+		
+		
+		
+Ubuntu - Windows Ssh:
+
+	Ubuntu:
+	NetworkSettings -> Nat selected.
+		Advanced->port forwarding :
+					host ip:0.0.0.0,hport:2222,guest ip:ifconfig_ip gport:22
+	Windows:
+		ip = ipconfig_ip
+		ssh -p 2222 ip
+		
+	Libs:
+	
+		sudo apt-get install libgl1-mesa-dev
+		
+Change File Permission:
+	sudo chown "username" -R "fileName"
+			
+RPI:
+	export QT_QPA_EGLFS_PHYSICAL_WIDTH=531
+	export QT_QPA_EGLFS_PHYSICAL_HEIGHT=298
+
+	# Display size example 2: Raspberry Pi 7" touchscreen: 155mm x 86mm
+	#export QT_QPA_EGLFS_PHYSICAL_WIDTH=155
+	#export QT_QPA_EGLFS_PHYSICAL_HEIGHT=86
+
+	# hide mouse cursor
+	export QT_QPA_EGLFS_HIDECURSOR=1
