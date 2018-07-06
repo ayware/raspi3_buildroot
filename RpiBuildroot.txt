@@ -117,3 +117,7 @@ RPI:
 
 	# hide mouse cursor
 	export QT_QPA_EGLFS_HIDECURSOR=1
+	
+	
+	Ubuntu Port:
+		 socat -d -d pty,raw,echo=0 pty,raw,echo=0
